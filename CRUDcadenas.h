@@ -4,15 +4,18 @@
 
 #define MAX_CARACTERES 30
 
-typedef char* String;
 typedef struct {
     int longitudRegistro;
-    String cadena;
-    String binario;
-    String hexadecimal;
+    char *cadena;
+    char *binario;
+    char *hexadecimal;
 } Registro;
 
 void ejecutarPrograma();
-int validarExistenciaArchivo();
 void menu1();
 void menu2();
+void registrarElementos(int);
+void salir();
+
+int generarArchivo(Registro *, int);
+int validarExistenciaArchivo();
