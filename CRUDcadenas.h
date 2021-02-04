@@ -15,6 +15,8 @@ void ejecutarPrograma();
 void menu1();
 void menu2();
 void registrarElementos(int);
+void ordenar(Registro *, int);
+void mezclar(Registro *, Registro *, Registro *, int, int);
 void salir();
 
 int generarArchivo(Registro *, int);

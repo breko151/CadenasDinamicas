@@ -137,11 +137,66 @@ void registrarElementos(int numeroElementos) {
         fflush(stdout);
     }
     free(cadena);
+    ordenar(arregloRegistro, numeroElementos);
     if(generarArchivo(arregloRegistro, numeroElementos)) {
         printf("\nEl programa se cerrara...");
+        free(arregloRegistro);
         exit(1);
     } else 
         printf("\nArchivo generado con exito...\n");
+    free(arregloRegistro);
+}
+
+void ordenar(Registro *arreglo, int longitud) {
+    if(longitud < 2) 
+        return;
+    else {
+        int posicionMedia = longitud / 2;
+        int posicionMedia2 = longitud - posicionMedia;
+        Registro arregloIzquierdo[posicionMedia];
+        Registro arregloDerecho[posicionMedia2];
+        for(int i = 0; i < posicionMedia; i++) {
+            arregloIzquierdo[i] = arreglo[i];
+        }  
+        for(int i = posicionMedia; i < longitud; i++) {
+            arregloDerecho[i - posicionMedia] = arreglo[i];
+        }  
+        ordenar(arregloIzquierdo, posicionMedia);
+        ordenar(arregloDerecho, longitud - posicionMedia);
+        mezclar(arregloIzquierdo, arregloDerecho, arreglo, posicionMedia, posicionMedia2);
+    }
+}
+
+void mezclar(Registro *registroIzquierdo, Registro *registroDerecho, Registro *registros, int longitudIzq, int longitudDer) {
+    int indiceIzq = 0;
+    int indiceDer = 0;
+    int indiceFinal = 0;
+    int arregloIzq[longitudIzq];
+    int arregloDer[longitudDer];
+    for(int i = 0; i < longitudIzq; i++)
+        arregloIzq[i] = strlen(registroIzquierdo[i].cadena);
+    for(int i = 0; i < longitudDer; i++)
+        arregloDer[i] = strlen(registroDerecho[i].cadena);
+    while(indiceIzq < longitudIzq && indiceDer < longitudDer) {
+        if(arregloIzq[indiceIzq] > arregloDer[indiceDer]) {
+            registros[indiceFinal] = registroIzquierdo[indiceIzq];
+            indiceIzq++;
+        } else {
+            registros[indiceFinal] = registroDerecho[indiceDer];
+            indiceDer++;
+        }
+        indiceFinal++;
+    }
+    while(indiceIzq < longitudIzq) {
+        registros[indiceFinal] = registroIzquierdo[indiceIzq];
+        indiceIzq++;
+        indiceFinal++;
+    }
+    while(indiceDer < longitudDer) {
+        registros[indiceFinal] = registroDerecho[indiceDer];
+        indiceDer++;
+        indiceFinal++;
+    } 
 }
 
 void salir() {
