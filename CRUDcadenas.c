@@ -85,6 +85,7 @@ void menu2() {
 void registrarElementos(int numeroElementos) {
     int longitud = 0;
     char *cadena;
+
     arregloRegistro = (Registro *) malloc(sizeof(Registro) * numeroElementos);
     if(arregloRegistro == NULL) {
         printf("No es posible reservar memoria...");
@@ -130,8 +131,8 @@ void registrarElementos(int numeroElementos) {
             exit(1);
         }
         strcpy(arregloRegistro[i].cadena, cadena);
-        strcpy(arregloRegistro[i].binario, cadena);
-        strcpy(arregloRegistro[i].hexadecimal, cadena);
+        strcpy(arregloRegistro[i].binario, convertirBinario(cadena));
+        strcpy(arregloRegistro[i].hexadecimal, convertirHex(cadena));
         arregloRegistro[i].longitudRegistro = longitud;
         fflush(stdin);
         fflush(stdout);
@@ -173,6 +174,7 @@ void mezclar(Registro *registroIzquierdo, Registro *registroDerecho, Registro *r
     int indiceFinal = 0;
     int arregloIzq[longitudIzq];
     int arregloDer[longitudDer];
+
     for(int i = 0; i < longitudIzq; i++)
         arregloIzq[i] = strlen(registroIzquierdo[i].cadena);
     for(int i = 0; i < longitudDer; i++)
@@ -204,25 +206,57 @@ void salir() {
     exit(0);
 }
 
+char *convertirBinario(char* cadena) {
+    if(cadena == NULL) return 0; /* no hay cadena */
+    char *binario = malloc(sizeof(char) * (MAX_CARACTERES *8));
+    strcpy(binario,"");
+    char *ptr = cadena;
+    int i;
+    for(; *ptr != 0; ++ptr) {
+        for(i = 7; i >= 0; --i) {
+            (*ptr & 1 << i) ? strcat(binario,"1") : strcat(binario,"0");
+        }
+    }
+    return binario;
+}
+
+char *convertirHex(char *cadena) {
+    char *hex;
+    int i, j;
+    if(cadena == NULL) return 0;
+    hex = (char *) malloc(sizeof(char) * (MAX_CARACTERES *2));
+    memset(hex ,0, sizeof(hex));
+    for(i = 0, j = 0; i < strlen(cadena); i++, j += 2)
+    { 
+        sprintf((char*) hex + j, "%02X", cadena[i]);
+    }
+    hex[j]='\0';
+    return hex;
+}
+
 int generarArchivo(Registro *arregloRegistro, int numeroRegistros) {
     FILE *file;
+
     file = fopen("doc.txt", "w");
     if(file == NULL) {
         printf("No es posible generar el archivo...");
         return 1;
     }
     for(int i = 0; i < numeroRegistros; i++) 
-        fprintf(file,"%-2d%-30s%-240s%-60s%c%-3d\n", arregloRegistro[i].longitudRegistro, arregloRegistro[i].cadena, arregloRegistro[i].binario, arregloRegistro[i].hexadecimal, arregloRegistro[i].cadena[0], (int) arregloRegistro[i].cadena[0]);
+        fprintf(file,"%-2d%-30s%-240s%-60s%-2c%-3d\n", arregloRegistro[i].longitudRegistro, arregloRegistro[i].cadena, arregloRegistro[i].binario, arregloRegistro[i].hexadecimal, arregloRegistro[i].cadena[0], (int) arregloRegistro[i].cadena[0]);
     fclose(file);
     return 0;
 }
 
 int validarExistenciaArchivo() {
     FILE *file;
+
     file = fopen("doc.txt", "r");
     if(file == NULL) {
+        fclose(file);
         return 0; 
     } else { 
+        fclose(file);
         return 1;
     }
 }

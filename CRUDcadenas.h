@@ -19,5 +19,8 @@ void ordenar(Registro *, int);
 void mezclar(Registro *, Registro *, Registro *, int, int);
 void salir();
 
+char *convertirBinario(char *);
+char *convertirHex(char *);
+
 int generarArchivo(Registro *, int);
 int validarExistenciaArchivo();
