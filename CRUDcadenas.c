@@ -71,7 +71,7 @@ void menu2() {
             } else if(opc == 2) {
                 imprimirArreglo();
             } else if(opc == 3) {
-
+                borrarArreglo();
             } else 
                 salir();
         } else 
@@ -224,6 +224,49 @@ void imprimirArreglo() {
             }
         }
     }
+}
+
+void borrarArreglo() {
+    FILE *file; 
+    Registro * tabla; 
+    int cont = 1, cont2=0; 
+    int c,opcionUsuario; 
+    char * final; 
+
+    final = (char *) malloc(10 * sizeof(char)); 
+    printf("Tus datos son: \n");
+    imprimirArreglo(); 
+    printf("Elija el dato a borrar: "); 
+    scanf("%d", &opcionUsuario);
+    fflush(stdin); 
+    file = fopen("doc.txt","r");
+    strcpy(final,"");  
+    if(file == NULL) 
+        printf("No se ha abierto\n"); 
+    else {
+        while(1) {
+            c = fgetc(file);
+            if( feof(file) ) { 
+                break ;
+            }
+            if (cont!=opcionUsuario){
+                final = (char *) realloc(final, (cont2 + 100) *sizeof(char)); 
+                final[cont2]=c;
+                printf("%c", c);
+                cont2++; 
+            }
+            if (c=='\n'){
+                cont++; 
+            }
+        }
+    }
+    
+    fclose(file);
+    file  =  fopen("doc.txt","w+");
+    for(int i = 0; i < cont2; i++){
+        fprintf(file,"%c",final[i]);
+    }
+    fclose(file);
 }
 
 void salir() {

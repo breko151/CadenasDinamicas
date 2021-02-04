@@ -18,6 +18,7 @@ void registrarElementos(int);
 void ordenar(Registro *, int);
 void mezclar(Registro *, Registro *, Registro *, int, int);
 void imprimirArreglo();
+void borrarArreglo();
 void salir();
 
 char *convertirBinario(char *);
