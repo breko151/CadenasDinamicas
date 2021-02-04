@@ -69,7 +69,7 @@ void menu2() {
             if(opc == 1) {
 
             } else if(opc == 2) {
-
+                imprimirArreglo();
             } else if(opc == 3) {
 
             } else 
@@ -80,6 +80,7 @@ void menu2() {
         scanf("%c", &res);
         fflush(stdin);
     }
+    salir();
 }
 
 void registrarElementos(int numeroElementos) {
@@ -199,6 +200,30 @@ void mezclar(Registro *registroIzquierdo, Registro *registroDerecho, Registro *r
         indiceDer++;
         indiceFinal++;
     } 
+}
+
+void imprimirArreglo() {
+    FILE *file;
+    int cont = 1;
+    int c;
+
+    file = fopen("doc.txt", "r");
+    if(file == NULL) {
+        printf("No se ha abierto\n");
+        fclose(file);
+    } else {
+        while(1) {
+            c = fgetc(file);
+            if(feof(file)) {
+                break;
+            } else {
+                printf("%c", c);
+                if(c == '\n') {
+                    cont++;
+                }
+            }
+        }
+    }
 }
 
 void salir() {
