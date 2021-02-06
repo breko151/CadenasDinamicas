@@ -54,7 +54,7 @@ void menu1() {
 
 void menu2() {
     char res = 'S';
-    int opc;
+    int opc, numeroElementos;
 
     while(res == 'S' || res == 's') {
         printf("\nEscoge una opcion: ");
@@ -67,7 +67,10 @@ void menu2() {
         fflush(stdin);
         if (opc == 1 || opc == 2 || opc == 3 || opc ==4) {
             if(opc == 1) {
-
+                printf("Numero de elementos que desea registrar: ");
+                scanf("%i", &numeroElementos);
+                fflush(stdin);
+                registrarElementos(numeroElementos);
             } else if(opc == 2) {
                 imprimirArreglo();
             } else if(opc == 3) {
