@@ -55,7 +55,7 @@ void menu1() {
 
 void menu2() {
     char res = 'S';
-    int opc, numeroElementos;
+    int opc, numeroElementos, numeroRegistrosArchivos;
 
     while(res == 'S' || res == 's') {
         printf("\nEscoge una opcion: ");
@@ -68,11 +68,16 @@ void menu2() {
         fflush(stdin);
         if (opc == 1 || opc == 2 || opc == 3 || opc ==4) {
             if(opc == 1) {
+                numeroRegistrosArchivos = numeroRegistros();
                 printf("Numero de elementos que desea registrar: ");
                 scanf("%i", &numeroElementos);
                 fflush(stdin);
                 validarDatosEntradaNumerico(numeroElementos);
-                registrarElementos(numeroElementos);
+                if (numeroRegistrosArchivos != 0) {
+
+                } else {
+                    registrarElementos(numeroElementos);
+                }
             } else if(opc == 2) {
                 imprimirArreglo();
             } else if(opc == 3) {
@@ -209,63 +214,81 @@ void mezclar(Registro *registroIzquierdo, Registro *registroDerecho, Registro *r
 
 void imprimirArreglo() {
     FILE *file;
-    int c;
+    int c, numeroRegistrosArchivo;
 
-    file = fopen("doc.txt", "r");
-    if(file == NULL) {
-        printf("No se ha abierto\n");
-        fclose(file);
-    } else {
-        while(1) {
-            c = fgetc(file);
-            if(feof(file)) 
-                break;
-            else 
-                printf("%c", c);
+    numeroRegistrosArchivo = numeroRegistros();
+    if(numeroRegistrosArchivo != 0) {
+        file = fopen("doc.txt", "r");
+        if(file == NULL) {
+            printf("No se ha abierto\n");
+            fclose(file);
+        } else {
+            while(1) {
+                c = fgetc(file);
+                if(feof(file)) 
+                    break;
+                else 
+                    printf("%c", c);
+            }
         }
+    } else {
+        printf("No hay archivos que mostrar\n");
+        printf("Procure registrar elementos primero\n");
     }
 }
 
 void borrarArreglo() {
     FILE *file;  
     int cont = 1, cont2 = 0; 
-    int c, opcionUsuario; 
+    int c, opcionUsuario, numeroRegistrosArchivo; 
     char *final; 
 
-    final = (char *) malloc(10 * sizeof(char)); 
-    printf("Tus datos son: \n");
-    imprimirArreglo(); 
-    printf("Elija el dato a borrar: "); 
-    scanf("%d", &opcionUsuario);
-    fflush(stdin); 
-    validarDatosEntradaNumerico(opcionUsuario);
-    file = fopen("doc.txt","r");
-    strcpy(final, "");  
-    if(file == NULL) 
-        printf("No se ha abierto\n"); 
-    else {
-        while(1) {
-            c = fgetc(file);
-            if(feof(file)) { 
-                break ;
+    numeroRegistrosArchivo = numeroRegistros();
+    if(numeroRegistrosArchivo != 0) {
+        printf("Numero de registros en el archivo: %d\n", numeroRegistrosArchivo); 
+        final = (char *) malloc(10 * sizeof(char)); 
+        printf("Tus datos son: \n");
+        imprimirArreglo(); 
+        printf("Elija el dato a borrar: "); 
+        scanf("%d", &opcionUsuario);
+        fflush(stdin); 
+        validarDatosEntradaNumerico(opcionUsuario);
+        if(opcionUsuario <= numeroRegistrosArchivo) {
+            file = fopen("doc.txt","r");
+            strcpy(final, "");  
+            if(file == NULL) 
+                printf("No se ha abierto\n"); 
+            else {
+                while(1) {
+                    c = fgetc(file);
+                    if(feof(file)) { 
+                        break;
+                    }
+                    if (cont != opcionUsuario){
+                        final = (char *) realloc(final, (cont2 + 100) * sizeof(char)); 
+                        final[cont2] = c;
+                        printf("%c", c);
+                        cont2++; 
+                    }
+                    if (c == '\n'){
+                        cont++; 
+                    }
+                }
             }
-            if (cont != opcionUsuario){
-                final = (char *) realloc(final, 337 * sizeof(char)); 
-                final[cont2] = c;
-                printf("%c", c);
-                cont2++; 
+            fclose(file);
+            file  =  fopen("doc.txt","w+");
+            for(int i = 0; i < cont2; i++){
+                fprintf(file, "%c", final[i]);
             }
-            if (c=='\n'){
-                cont++; 
-            }
+            fclose(file); 
+        } else {
+            printf("Valor ingresado fuera de rango...\n");
+            fflush(stdout);
         }
+    } else {
+        printf("Existe documento pero no registros...\n");
+        printf("Procure registrar elementos primero\n");
     }
-    fclose(file);
-    file  =  fopen("doc.txt","w+");
-    for(int i = 0; i < cont2; i++){
-        fprintf(file, "%c", final[i]);
-    }
-    fclose(file);
 }
 
 void validarDatosEntradaNumerico(int datoEntrada) {
@@ -336,4 +359,28 @@ int validarExistenciaArchivo() {
         fclose(file);
         return 1;
     }
+}
+
+int numeroRegistros() {
+    FILE *file;
+    int c;
+    int contador = 0;
+    file = fopen("doc.txt", "r");
+    if(file == NULL) {
+        printf("No existe documento\n");
+        fclose(file);
+        free(arregloRegistro);
+        exit(1);
+    } else {
+        while(1) {
+            c = fgetc(file);
+            if(feof(file)) {
+                break;
+            }
+            if(c == '\n') {
+                contador++;
+            }
+        }
+    }
+    return contador;
 }
