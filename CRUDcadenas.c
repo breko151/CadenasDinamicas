@@ -27,6 +27,7 @@ void menu1() {
             printf("Numero de elementos que desea registrar: ");
             scanf("%i", &numeroElementos);
             fflush(stdin);
+            validarDatosEntradaNumerico(numeroElementos);
             registrarElementos(numeroElementos);
         } else {
             salir();
@@ -70,6 +71,7 @@ void menu2() {
                 printf("Numero de elementos que desea registrar: ");
                 scanf("%i", &numeroElementos);
                 fflush(stdin);
+                validarDatosEntradaNumerico(numeroElementos);
                 registrarElementos(numeroElementos);
             } else if(opc == 2) {
                 imprimirArreglo();
@@ -207,7 +209,6 @@ void mezclar(Registro *registroIzquierdo, Registro *registroDerecho, Registro *r
 
 void imprimirArreglo() {
     FILE *file;
-    int cont = 1;
     int c;
 
     file = fopen("doc.txt", "r");
@@ -217,24 +218,19 @@ void imprimirArreglo() {
     } else {
         while(1) {
             c = fgetc(file);
-            if(feof(file)) {
+            if(feof(file)) 
                 break;
-            } else {
+            else 
                 printf("%c", c);
-                if(c == '\n') {
-                    cont++;
-                }
-            }
         }
     }
 }
 
 void borrarArreglo() {
-    FILE *file; 
-    Registro * tabla; 
-    int cont = 1, cont2=0; 
-    int c,opcionUsuario; 
-    char * final; 
+    FILE *file;  
+    int cont = 1, cont2 = 0; 
+    int c, opcionUsuario; 
+    char *final; 
 
     final = (char *) malloc(10 * sizeof(char)); 
     printf("Tus datos son: \n");
@@ -242,19 +238,20 @@ void borrarArreglo() {
     printf("Elija el dato a borrar: "); 
     scanf("%d", &opcionUsuario);
     fflush(stdin); 
+    validarDatosEntradaNumerico(opcionUsuario);
     file = fopen("doc.txt","r");
-    strcpy(final,"");  
+    strcpy(final, "");  
     if(file == NULL) 
         printf("No se ha abierto\n"); 
     else {
         while(1) {
             c = fgetc(file);
-            if( feof(file) ) { 
+            if(feof(file)) { 
                 break ;
             }
-            if (cont!=opcionUsuario){
-                final = (char *) realloc(final, (cont2 + 100) *sizeof(char)); 
-                final[cont2]=c;
+            if (cont != opcionUsuario){
+                final = (char *) realloc(final, 337 * sizeof(char)); 
+                final[cont2] = c;
                 printf("%c", c);
                 cont2++; 
             }
@@ -263,13 +260,22 @@ void borrarArreglo() {
             }
         }
     }
-    
     fclose(file);
     file  =  fopen("doc.txt","w+");
     for(int i = 0; i < cont2; i++){
-        fprintf(file,"%c",final[i]);
+        fprintf(file, "%c", final[i]);
     }
     fclose(file);
+}
+
+void validarDatosEntradaNumerico(int datoEntrada) {
+    if(!isalpha(datoEntrada)) {
+        printf("Dato de entrada correcto\n");
+    } else {
+        printf("Debes ingresar un numero...");
+        printf("\nSaliendo del programa...");
+        exit(1);
+    }
 }
 
 void salir() {
